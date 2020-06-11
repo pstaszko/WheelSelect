@@ -18,7 +18,10 @@ namespace WheelSelect
     {
         private List<string> theList = new List<string>();
         private int selectedIndex = 0;
-        private string saveLocation = ConfigurationManager.AppSettings["SaveLocation"] ?? @"c:\wheel_selection.txt";
+        private string outputLocation = ConfigurationManager.AppSettings["OutputLocation"] ?? @"c:\wheel_selection.txt";
+        private string clearOutputFileOnStart = ConfigurationManager.AppSettings["ClearOutputFileOnStart"];
+        private string clearOutputFileOnEscape = ConfigurationManager.AppSettings["ClearOutputFileOnEscape"];
+        private string outputMethod = ConfigurationManager.AppSettings["OutputMethod"];
         private string windowBackgroundColor = ConfigurationManager.AppSettings["WindowBackgroundColor"];
         private string selectedTextColor = ConfigurationManager.AppSettings["SelectedTextColor"];
         private string offset1TextColor = ConfigurationManager.AppSettings["Offset1TextColor"];
@@ -33,6 +36,12 @@ namespace WheelSelect
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            bool clearOnStart;
+            if (bool.TryParse(clearOutputFileOnStart, out clearOnStart)) {
+                if (clearOnStart) {
+                    WriteToSaveFile("");
+                }
+            }
             TrySetColors();
             HandleArgs();
             HandleEvent(false);
@@ -58,6 +67,12 @@ namespace WheelSelect
         private void Form1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
             if (e.KeyCode == Keys.Escape) {
+                bool clearOnEsc;
+                if (bool.TryParse(clearOutputFileOnEscape, out clearOnEsc)) {
+                    if (clearOnEsc) {
+                        WriteToSaveFile("");
+                    }
+                }
                 Environment.Exit(0);
             } else if (e.KeyCode == Keys.Enter) {
                 SaveSelection();
@@ -151,8 +166,27 @@ namespace WheelSelect
 
         private void SaveSelection()
         {
-            File.AppendAllText(saveLocation, selected.Text);
+            WriteToSaveFile(selected.Text);
             Environment.Exit(0);
+        }
+
+        private void WriteToSaveFile(string value)
+        {
+            OutputMethod om;
+            if (Enum.TryParse(outputMethod, out om)) {
+                switch (om) {
+                    case OutputMethod.Overwrite:
+                        File.WriteAllText(outputLocation, value);
+                        break;
+                    case OutputMethod.Append:
+                        File.AppendAllText(outputLocation, value);
+                        break;
+                    default:
+                        File.WriteAllText(outputLocation, value);
+                        break;
+                }
+            }
+            
         }
 
         private void TrySetColors()
@@ -200,5 +234,11 @@ namespace WheelSelect
         Bottom1,
         Bottom2,
         Bottom3
+    }
+
+    public enum OutputMethod
+    {
+        Overwrite,
+        Append
     }
 }
