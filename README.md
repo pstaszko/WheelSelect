@@ -26,8 +26,8 @@ Example:
 <appSettings>
     <add key="OutputLocation" value="c:\wheel_selection.txt" />
     <add key="OutputMethod" value="Overwrite" />
-    <add key="ClearOutputFileOnStart"  value="true" />
-    <add key="ClearOutputFileOnEscape"  value="true" />
+    <add key="ClearOutputFileOnStart" value="true" />
+    <add key="ClearOutputFileOnEscape" value="true" />
     <add key="WindowBackgroundColor" value="White" />
     <add key="SelectedTextColor" value="SteelBlue" />
     <add key="Offset1TextColor" value="DimGray" />
