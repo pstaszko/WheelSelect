@@ -27,5 +27,5 @@ Example:
     <add key="Offset1TextColor" value="DimGray" />
     <add key="Offset2TextColor" value="Gray" />
     <add key="Offset3TextColor" value="Silver" />
-  </appSettings>
+</appSettings>
 ```
