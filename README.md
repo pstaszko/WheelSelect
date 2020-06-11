@@ -17,3 +17,15 @@ The following are color customizations and must be a valid value of the `System.
 * **Offset1TextColor** Sets the text color of the value(s) 1 position above/below the primary selected value.
 * **Offset2TextColor** Sets the text color of the value(s) 2 positions above/below the primary selected value.
 * **Offset3TextColor** Sets the text color of the value(s) 3 position above/below the primary selected value.
+
+Example:
+```
+<appSettings>
+    <add key="SaveLocation" value="c:\wheel_selection.txt" />
+    <add key="WindowBackgroundColor" value="White" />
+    <add key="SelectedTextColor" value="SteelBlue" />
+    <add key="Offset1TextColor" value="DimGray" />
+    <add key="Offset2TextColor" value="Gray" />
+    <add key="Offset3TextColor" value="Silver" />
+  </appSettings>
+```
