@@ -18,6 +18,7 @@ namespace WheelSelect
     {
         private List<string> theList = new List<string>();
         private int selectedIndex = 0;
+        private DateTime lastInputTime = DateTime.Now;
         private string outputLocation = ConfigurationManager.AppSettings["OutputLocation"] ?? @"c:\wheel_selection.txt";
         private string clearOutputFileOnStart = ConfigurationManager.AppSettings["ClearOutputFileOnStart"];
         private string clearOutputFileOnEscape = ConfigurationManager.AppSettings["ClearOutputFileOnEscape"];
@@ -27,11 +28,35 @@ namespace WheelSelect
         private string offset1TextColor = ConfigurationManager.AppSettings["Offset1TextColor"];
         private string offset2TextColor = ConfigurationManager.AppSettings["Offset2TextColor"];
         private string offset3TextColor = ConfigurationManager.AppSettings["Offset3TextColor"];
+        private string prevInputQueue = "";
+        private string inputQueue = "";
+        private Timer processInputQueueTimer = new Timer();
+        private Timer clearInputQueueTimer = new Timer();
 
         public WheelSelect()
         {
             InitializeComponent();
+            processInputQueueTimer.Interval = 500;
+            clearInputQueueTimer.Interval = 800;
+            processInputQueueTimer.Tick += ProcessInputQueueTimer_Tick;
+            clearInputQueueTimer.Tick += ClearInputQueueTimer_Tick;
             this.MouseWheel += Form1_MouseWheel;
+        }
+
+        private void ClearInputQueueTimer_Tick(object sender, EventArgs e)
+        {
+            inputQueue = "";
+            prevInputQueue = "";
+            clearInputQueueTimer.Stop();
+        }
+
+        private void ProcessInputQueueTimer_Tick(object sender, EventArgs e)
+        {
+            if (!inputQueue.Equals("") && !inputQueue.Equals(prevInputQueue)) {
+                TryFindMatch(inputQueue);
+                prevInputQueue = inputQueue;
+                clearInputQueueTimer.Start();
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -42,6 +67,7 @@ namespace WheelSelect
                     WriteToSaveFile("");
                 }
             }
+            processInputQueueTimer.Start();
             TrySetColors();
             HandleArgs();
             HandleEvent(false);
@@ -51,17 +77,15 @@ namespace WheelSelect
         {
             string[] args = Environment.GetCommandLineArgs();
             // args[0] seems to always = execution path. Neat.
-            if (args.Length == 3) {
-                var delim = args[1];
-                var data = args[2];
-                if (delim == "\\n") {
-                    delim = "\n";
-                    data = data.Replace("\\n", "\n");
-                }
-                var splitData = Regex.Split(data, delim);
-                theList.AddRange(splitData);
-                selectedIndex = -1;
+            var delim = args[1];
+            var data = args[2];
+            if (delim == "\\n") {
+                delim = "\n";
+                data = data.Replace("\\n", "\n");
             }
+            var splitData = Regex.Split(data, delim);
+            theList.AddRange(splitData);
+            selectedIndex = -1;
         }
 
         private void Form1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
@@ -221,6 +245,48 @@ namespace WheelSelect
             } catch (Exception) {
                 this.top3.ForeColor = Color.Silver;
                 this.bottom3.ForeColor = Color.Silver;
+            }
+        }
+
+        private void WheelSelect_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            lastInputTime = DateTime.Now;
+            inputQueue += e.KeyChar.ToString();
+        }
+
+        private void TryFindMatch(string matchThis)
+        {
+            var hits = theList.Where(x => x.ToLower().Contains(matchThis.ToLower()));
+            if (hits.Count() >= 1) {
+                var matchNum = FindFirstMatchIndex(hits.First());
+                ScrollToIndex(matchNum);
+            }
+        }
+
+        private int FindFirstMatchIndex(string str)
+        {
+            var index = 0;
+            foreach (var item in theList) {
+                if (item == str) {
+                    return index;
+                }
+                index++;
+            }
+            return 0;
+        }
+
+        private void ScrollToIndex(int newIndex)
+        {
+            var diff = newIndex - selectedIndex;
+            var diffAbs = Math.Abs(diff);
+            var scrollUp = true;
+            
+            // the target value is further down the list and we need to scroll down to get to it
+            if (diff > 0) {
+                scrollUp = false;
+            }
+            for (var i = 0; i < diffAbs; i++) {
+                HandleEvent(scrollUp);
             }
         }
     }
