@@ -249,7 +249,6 @@ namespace WheelSelect
 
         private void WheelSelect_KeyPress(object sender, KeyPressEventArgs e)
         {
-            lastInputTime = DateTime.Now;
             inputQueue += e.KeyChar.ToString();
         }
 
