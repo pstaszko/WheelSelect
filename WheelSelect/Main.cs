@@ -18,7 +18,6 @@ namespace WheelSelect
     {
         private List<string> theList = new List<string>();
         private int selectedIndex = 0;
-        private DateTime lastInputTime = DateTime.Now;
         private string outputLocation = ConfigurationManager.AppSettings["OutputLocation"] ?? @"c:\wheel_selection.txt";
         private string clearOutputFileOnStart = ConfigurationManager.AppSettings["ClearOutputFileOnStart"];
         private string clearOutputFileOnEscape = ConfigurationManager.AppSettings["ClearOutputFileOnEscape"];
