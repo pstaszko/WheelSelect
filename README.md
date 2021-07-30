@@ -6,7 +6,7 @@ Pass a delimited list into the form for a "wheel like" selection. Meant to be us
 
 ## Main Functionality
 
-- Simply pass two arguments into the exe and the interface will display in the center of the screen loaded with your data set.
+- Simply pass two arguments (the delimiter and the list) into the exe and the interface will display in the center of the screen loaded with your data set.
   - ex: `WheelSelect.exe "," "option a,option b,option c"`
 - Use the up/down arrow keys or the mouse wheel to scroll through the list, or type some letters as a keyword search.
 - Push the Enter key when you have the desired option selected and the value will be saved to a file.
