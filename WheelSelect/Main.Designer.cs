@@ -35,7 +35,10 @@
             this.bottom2 = new System.Windows.Forms.Label();
             this.bottom3 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.txtInput = new System.Windows.Forms.TextBox();
+            this.panel2 = new System.Windows.Forms.Panel();
             this.panel1.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // top3
@@ -47,7 +50,7 @@
             this.top3.Location = new System.Drawing.Point(0, 0);
             this.top3.Margin = new System.Windows.Forms.Padding(0);
             this.top3.Name = "top3";
-            this.top3.Size = new System.Drawing.Size(484, 20);
+            this.top3.Size = new System.Drawing.Size(486, 20);
             this.top3.TabIndex = 10;
             this.top3.Text = "abcdefghijklmnopqrstuvwxyz";
             this.top3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -61,7 +64,7 @@
             this.top2.Location = new System.Drawing.Point(0, 20);
             this.top2.Margin = new System.Windows.Forms.Padding(0);
             this.top2.Name = "top2";
-            this.top2.Size = new System.Drawing.Size(484, 20);
+            this.top2.Size = new System.Drawing.Size(486, 20);
             this.top2.TabIndex = 9;
             this.top2.Text = "abcdefghijklmnopqrstuvwxyz";
             this.top2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -75,7 +78,7 @@
             this.top1.Location = new System.Drawing.Point(0, 40);
             this.top1.Margin = new System.Windows.Forms.Padding(0);
             this.top1.Name = "top1";
-            this.top1.Size = new System.Drawing.Size(484, 28);
+            this.top1.Size = new System.Drawing.Size(486, 28);
             this.top1.TabIndex = 8;
             this.top1.Text = "abcdefghijklmnopqrstuvwxyz";
             this.top1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -90,7 +93,7 @@
             this.selected.Location = new System.Drawing.Point(-1, 71);
             this.selected.Margin = new System.Windows.Forms.Padding(0, 3, 0, 3);
             this.selected.Name = "selected";
-            this.selected.Size = new System.Drawing.Size(486, 40);
+            this.selected.Size = new System.Drawing.Size(488, 40);
             this.selected.TabIndex = 14;
             this.selected.Text = "abcdefghijklmnopqrstuvwxyz";
             this.selected.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -104,7 +107,7 @@
             this.bottom1.Location = new System.Drawing.Point(0, 114);
             this.bottom1.Margin = new System.Windows.Forms.Padding(0);
             this.bottom1.Name = "bottom1";
-            this.bottom1.Size = new System.Drawing.Size(484, 28);
+            this.bottom1.Size = new System.Drawing.Size(486, 28);
             this.bottom1.TabIndex = 11;
             this.bottom1.Text = "abcdefghijklmnopqrstuvwxyz";
             this.bottom1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
@@ -118,7 +121,7 @@
             this.bottom2.Location = new System.Drawing.Point(0, 142);
             this.bottom2.Margin = new System.Windows.Forms.Padding(0);
             this.bottom2.Name = "bottom2";
-            this.bottom2.Size = new System.Drawing.Size(484, 20);
+            this.bottom2.Size = new System.Drawing.Size(486, 20);
             this.bottom2.TabIndex = 12;
             this.bottom2.Text = "abcdefghijklmnopqrstuvwxyz";
             this.bottom2.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -132,17 +135,13 @@
             this.bottom3.Location = new System.Drawing.Point(0, 162);
             this.bottom3.Margin = new System.Windows.Forms.Padding(0);
             this.bottom3.Name = "bottom3";
-            this.bottom3.Size = new System.Drawing.Size(484, 20);
+            this.bottom3.Size = new System.Drawing.Size(486, 20);
             this.bottom3.TabIndex = 13;
             this.bottom3.Text = "abcdefghijklmnopqrstuvwxyz";
             this.bottom3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // panel1
             // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel1.Controls.Add(this.selected);
             this.panel1.Controls.Add(this.top3);
             this.panel1.Controls.Add(this.bottom3);
@@ -150,17 +149,43 @@
             this.panel1.Controls.Add(this.bottom2);
             this.panel1.Controls.Add(this.top1);
             this.panel1.Controls.Add(this.bottom1);
-            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Location = new System.Drawing.Point(0, 36);
+            this.panel1.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(486, 189);
+            this.panel1.Size = new System.Drawing.Size(486, 187);
             this.panel1.TabIndex = 15;
+            // 
+            // txtInput
+            // 
+            this.txtInput.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.txtInput.Font = new System.Drawing.Font("Segoe UI Light", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtInput.Location = new System.Drawing.Point(3, 6);
+            this.txtInput.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
+            this.txtInput.Name = "txtInput";
+            this.txtInput.Size = new System.Drawing.Size(480, 28);
+            this.txtInput.TabIndex = 16;
+            this.txtInput.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.txtInput.TextChanged += new System.EventHandler(this.txtInput_TextChanged);
+            this.txtInput.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.txtInput_PreviewKeyDown);
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.txtInput);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
+            this.panel2.Location = new System.Drawing.Point(0, 0);
+            this.panel2.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
+            this.panel2.Name = "panel2";
+            this.panel2.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
+            this.panel2.Size = new System.Drawing.Size(486, 36);
+            this.panel2.TabIndex = 17;
             // 
             // WheelSelect
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(486, 189);
+            this.ClientSize = new System.Drawing.Size(486, 223);
+            this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
@@ -173,9 +198,9 @@
             this.Text = "Form1";
             this.TopMost = true;
             this.Load += new System.EventHandler(this.Form1_Load);
-            this.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.WheelSelect_KeyPress);
-            this.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(this.Form1_PreviewKeyDown);
             this.panel1.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
+            this.panel2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -190,6 +215,8 @@
         private System.Windows.Forms.Label bottom2;
         private System.Windows.Forms.Label bottom3;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.TextBox txtInput;
+        private System.Windows.Forms.Panel panel2;
     }
 }
 

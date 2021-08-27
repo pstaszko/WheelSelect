@@ -18,38 +18,15 @@ namespace WheelSelect
     public partial class WheelSelect : Form
     {
         private List<string> theList = new List<string>();
+        private List<string> filteredList = new List<string>();
         private int selectedIndex = 0;
         private Settings settings;
-        private string prevInputQueue = "";
-        private string inputQueue = "";
-        private Timer processInputQueueTimer = new Timer();
-        private Timer clearInputQueueTimer = new Timer();
 
         public WheelSelect()
         {
             InitializeComponent();
-            processInputQueueTimer.Interval = 500;
-            clearInputQueueTimer.Interval = 800;
-            processInputQueueTimer.Tick += ProcessInputQueueTimer_Tick;
-            clearInputQueueTimer.Tick += ClearInputQueueTimer_Tick;
             this.MouseWheel += Form1_MouseWheel;
             settings = new Settings().GetSettings();
-        }
-
-        private void ClearInputQueueTimer_Tick(object sender, EventArgs e)
-        {
-            inputQueue = "";
-            prevInputQueue = "";
-            clearInputQueueTimer.Stop();
-        }
-
-        private void ProcessInputQueueTimer_Tick(object sender, EventArgs e)
-        {
-            if (!inputQueue.Equals("") && !inputQueue.Equals(prevInputQueue)) {
-                TryFindMatch(inputQueue);
-                prevInputQueue = inputQueue;
-                clearInputQueueTimer.Start();
-            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -57,9 +34,9 @@ namespace WheelSelect
             if (settings.ClearOutputFileOnStart) {
                 WriteToSaveFile("");
             }
-            processInputQueueTimer.Start();
             TrySetColors();
             HandleArgs();
+            filteredList.AddRange(theList);
             HandleEvent(false);
         }
 
@@ -76,23 +53,6 @@ namespace WheelSelect
             var splitData = Regex.Split(data, delim);
             theList.AddRange(splitData);
             selectedIndex = -1;
-        }
-
-        private void Form1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            Debug.WriteLine(e.KeyCode);
-            if (e.KeyCode == Keys.Escape) {
-                if (settings.ClearOutputFileOnEscape) {
-                    WriteToSaveFile("");
-                }
-                Application.Exit();
-            } else if (e.KeyCode == Keys.Enter) {
-                SaveSelection();
-            } else if (e.KeyCode == Keys.Up) {
-                HandleEvent(true);
-            } else if (e.KeyCode == Keys.Down) {
-                HandleEvent(false);
-            }
         }
 
         private void Form1_MouseWheel(object sender, MouseEventArgs e)
@@ -149,31 +109,35 @@ namespace WheelSelect
                     trackInt = selectedIndex;
                     break;
             }
-            if (trackInt > theList.Count() - 1) {
+            if (trackInt > filteredList.Count() - 1) {
                 return "";
             }
             if (trackInt < 0) {
                 return "";
             }
-            return theList[trackInt];
+            return filteredList[trackInt];
         }
 
         private int GetPreviousIndex()
         {
             if (selectedIndex == 0) {
                 return 0;
-            } else if (selectedIndex == theList.Count()) {
+            } else if (selectedIndex == filteredList.Count()) {
                 return selectedIndex;
             }
-            return selectedIndex - 1;
+            var returnVal = selectedIndex - 1;
+            Debug.WriteLine("prev: " + returnVal);
+            return returnVal;
         }
 
         private int GetNextIndex()
         {
-            if (selectedIndex == theList.Count() - 1) {
+            if (selectedIndex == filteredList.Count() - 1) {
                 return selectedIndex;
             }
-            return selectedIndex + 1;
+            var returnVal = selectedIndex + 1;
+            Debug.WriteLine("next: " + returnVal);
+            return returnVal;
         }
 
         private void SaveSelection()
@@ -211,90 +175,66 @@ namespace WheelSelect
             return WindowsTheme.Default;
         }
 
+        private void SetDarkMode()
+        {
+            this.txtInput.BackColor = settings.DarkModeBackgroundColor;
+            this.txtInput.ForeColor = settings.DarkModeSelectedTextColor;
+            this.BackColor = settings.DarkModeBackgroundColor;
+            this.selected.ForeColor = settings.DarkModeSelectedTextColor;
+            this.top1.ForeColor = settings.DarkModeOffset1TextColor;
+            this.bottom1.ForeColor = settings.DarkModeOffset1TextColor;
+            this.top2.ForeColor = settings.DarkModeOffset2TextColor;
+            this.bottom2.ForeColor = settings.DarkModeOffset2TextColor;
+            this.top3.ForeColor = settings.DarkModeOffset3TextColor;
+            this.bottom3.ForeColor = settings.DarkModeOffset3TextColor;
+        }
+
+        private void SetLightMode()
+        {
+            this.txtInput.BackColor = settings.LightModeBackgroundColor;
+            this.txtInput.ForeColor = settings.LightModeSelectedTextColor;
+            this.BackColor = settings.LightModeBackgroundColor;
+            this.selected.ForeColor = settings.LightModeSelectedTextColor;
+            this.top1.ForeColor = settings.LightModeOffset1TextColor;
+            this.bottom1.ForeColor = settings.LightModeOffset1TextColor;
+            this.top2.ForeColor = settings.LightModeOffset2TextColor;
+            this.bottom2.ForeColor = settings.LightModeOffset2TextColor;
+            this.top3.ForeColor = settings.LightModeOffset3TextColor;
+            this.bottom3.ForeColor = settings.LightModeOffset3TextColor;
+        }
+
         private void TrySetColors()
         {
             if (settings.SyncWithWindowsTheme) {
                 var theme = GetWindowsThemeSetting();
                 switch (theme) {
                     case WindowsTheme.LightMode:
-                        this.BackColor = settings.LightModeBackgroundColor;
-                        this.selected.ForeColor = settings.LightModeSelectedTextColor;
-                        this.top1.ForeColor = settings.LightModeOffset1TextColor;
-                        this.bottom1.ForeColor = settings.LightModeOffset1TextColor;
-                        this.top2.ForeColor = settings.LightModeOffset2TextColor;
-                        this.bottom2.ForeColor = settings.LightModeOffset2TextColor;
-                        this.top3.ForeColor = settings.LightModeOffset3TextColor;
-                        this.bottom3.ForeColor = settings.LightModeOffset3TextColor;
+                        SetLightMode();
                         break;
                     case WindowsTheme.DarkMode:
-                        this.BackColor = settings.DarkModeBackgroundColor;
-                        this.selected.ForeColor = settings.DarkModeSelectedTextColor;
-                        this.top1.ForeColor = settings.DarkModeOffset1TextColor;
-                        this.bottom1.ForeColor = settings.DarkModeOffset1TextColor;
-                        this.top2.ForeColor = settings.DarkModeOffset2TextColor;
-                        this.bottom2.ForeColor = settings.DarkModeOffset2TextColor;
-                        this.top3.ForeColor = settings.DarkModeOffset3TextColor;
-                        this.bottom3.ForeColor = settings.DarkModeOffset3TextColor;
+                        SetDarkMode();
                         break;
                     default:
-                        this.BackColor = settings.LightModeBackgroundColor;
-                        this.selected.ForeColor = settings.LightModeSelectedTextColor;
-                        this.top1.ForeColor = settings.LightModeOffset1TextColor;
-                        this.bottom1.ForeColor = settings.LightModeOffset1TextColor;
-                        this.top2.ForeColor = settings.LightModeOffset2TextColor;
-                        this.bottom2.ForeColor = settings.LightModeOffset2TextColor;
-                        this.top3.ForeColor = settings.LightModeOffset3TextColor;
-                        this.bottom3.ForeColor = settings.LightModeOffset3TextColor;
+                        SetLightMode();
                         break;
                 }
             } else {
                 if (settings.DefaultTheme == WindowsTheme.DarkMode) {
-                    this.BackColor = settings.DarkModeBackgroundColor;
-                    this.selected.ForeColor = settings.DarkModeSelectedTextColor;
-                    this.top1.ForeColor = settings.DarkModeOffset1TextColor;
-                    this.bottom1.ForeColor = settings.DarkModeOffset1TextColor;
-                    this.top2.ForeColor = settings.DarkModeOffset2TextColor;
-                    this.bottom2.ForeColor = settings.DarkModeOffset2TextColor;
-                    this.top3.ForeColor = settings.DarkModeOffset3TextColor;
-                    this.bottom3.ForeColor = settings.DarkModeOffset3TextColor;
+                    SetDarkMode();
                 } else {
-                    this.BackColor = settings.LightModeBackgroundColor;
-                    this.selected.ForeColor = settings.LightModeSelectedTextColor;
-                    this.top1.ForeColor = settings.LightModeOffset1TextColor;
-                    this.bottom1.ForeColor = settings.LightModeOffset1TextColor;
-                    this.top2.ForeColor = settings.LightModeOffset2TextColor;
-                    this.bottom2.ForeColor = settings.LightModeOffset2TextColor;
-                    this.top3.ForeColor = settings.LightModeOffset3TextColor;
-                    this.bottom3.ForeColor = settings.LightModeOffset3TextColor;
+                    SetLightMode();
                 }
             }
             
         }
 
-        private void WheelSelect_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            inputQueue += e.KeyChar.ToString();
-        }
-
         private void TryFindMatch(string matchThis)
         {
-            var hits = theList.Where(x => x.ToLower().Contains(matchThis.ToLower()));
-            if (hits.Count() >= 1) {
-                var matchNum = FindFirstMatchIndex(hits.First());
-                ScrollToIndex(matchNum);
-            }
-        }
-
-        private int FindFirstMatchIndex(string str)
-        {
-            var index = 0;
-            foreach (var item in theList) {
-                if (item == str) {
-                    return index;
-                }
-                index++;
-            }
-            return 0;
+            Debug.WriteLine(matchThis);
+            filteredList.Clear();
+            filteredList.AddRange(theList.Where(x => x.ToLower().Contains(matchThis.ToLower())).ToList());
+            ScrollToIndex(0);
+            HandleEvent(true);
         }
 
         private void ScrollToIndex(int newIndex)
@@ -309,6 +249,42 @@ namespace WheelSelect
             }
             for (var i = 0; i < diffAbs; i++) {
                 HandleEvent(scrollUp);
+            }
+        }
+
+        private void resetList()
+        {
+            selectedIndex = 0;
+            HandleEvent(true);
+        }
+
+        private void txtInput_TextChanged(object sender, EventArgs e)
+        {
+            filteredList.Clear();
+            if (txtInput.Text.Length > 0) {
+                TryFindMatch(txtInput.Text);
+            } else {
+                filteredList.AddRange(theList);
+                resetList();
+            }
+        }
+
+        private void txtInput_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
+        {
+            Debug.WriteLine(e.KeyCode);
+            if (e.KeyCode == Keys.Escape) {
+                if (settings.ClearOutputFileOnEscape) {
+                    WriteToSaveFile("");
+                }
+                Application.Exit();
+            } else if (e.KeyCode == Keys.Enter) {
+                SaveSelection();
+            } else if (e.KeyCode == Keys.Up) {
+                HandleEvent(true);
+                SendKeys.Send("{END}");
+            } else if (e.KeyCode == Keys.Down) {
+                HandleEvent(false);
+                SendKeys.Send("{END}");
             }
         }
     }
