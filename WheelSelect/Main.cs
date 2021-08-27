@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
@@ -18,15 +19,7 @@ namespace WheelSelect
     {
         private List<string> theList = new List<string>();
         private int selectedIndex = 0;
-        private string outputLocation = ConfigurationManager.AppSettings["OutputLocation"] ?? @"c:\wheel_selection.txt";
-        private string clearOutputFileOnStart = ConfigurationManager.AppSettings["ClearOutputFileOnStart"];
-        private string clearOutputFileOnEscape = ConfigurationManager.AppSettings["ClearOutputFileOnEscape"];
-        private string outputMethod = ConfigurationManager.AppSettings["OutputMethod"];
-        private string windowBackgroundColor = ConfigurationManager.AppSettings["WindowBackgroundColor"];
-        private string selectedTextColor = ConfigurationManager.AppSettings["SelectedTextColor"];
-        private string offset1TextColor = ConfigurationManager.AppSettings["Offset1TextColor"];
-        private string offset2TextColor = ConfigurationManager.AppSettings["Offset2TextColor"];
-        private string offset3TextColor = ConfigurationManager.AppSettings["Offset3TextColor"];
+        private Settings settings;
         private string prevInputQueue = "";
         private string inputQueue = "";
         private Timer processInputQueueTimer = new Timer();
@@ -40,6 +33,7 @@ namespace WheelSelect
             processInputQueueTimer.Tick += ProcessInputQueueTimer_Tick;
             clearInputQueueTimer.Tick += ClearInputQueueTimer_Tick;
             this.MouseWheel += Form1_MouseWheel;
+            settings = new Settings().GetSettings();
         }
 
         private void ClearInputQueueTimer_Tick(object sender, EventArgs e)
@@ -60,11 +54,8 @@ namespace WheelSelect
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            bool clearOnStart;
-            if (bool.TryParse(clearOutputFileOnStart, out clearOnStart)) {
-                if (clearOnStart) {
-                    WriteToSaveFile("");
-                }
+            if (settings.ClearOutputFileOnStart) {
+                WriteToSaveFile("");
             }
             processInputQueueTimer.Start();
             TrySetColors();
@@ -89,14 +80,12 @@ namespace WheelSelect
 
         private void Form1_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
+            Debug.WriteLine(e.KeyCode);
             if (e.KeyCode == Keys.Escape) {
-                bool clearOnEsc;
-                if (bool.TryParse(clearOutputFileOnEscape, out clearOnEsc)) {
-                    if (clearOnEsc) {
-                        WriteToSaveFile("");
-                    }
+                if (settings.ClearOutputFileOnEscape) {
+                    WriteToSaveFile("");
                 }
-                Environment.Exit(0);
+                Application.Exit();
             } else if (e.KeyCode == Keys.Enter) {
                 SaveSelection();
             } else if (e.KeyCode == Keys.Up) {
@@ -195,56 +184,91 @@ namespace WheelSelect
 
         private void WriteToSaveFile(string value)
         {
-            OutputMethod om;
-            if (Enum.TryParse(outputMethod, out om)) {
-                switch (om) {
-                    case OutputMethod.Overwrite:
-                        File.WriteAllText(outputLocation, value);
-                        break;
-                    case OutputMethod.Append:
-                        File.AppendAllText(outputLocation, value);
-                        break;
-                    default:
-                        File.WriteAllText(outputLocation, value);
-                        break;
+            switch (settings.OutputMethod) {
+                case OutputMethodEnum.Overwrite:
+                    File.WriteAllText(settings.OutputLocation, value);
+                    break;
+                case OutputMethodEnum.Append:
+                    File.AppendAllText(settings.OutputLocation, value);
+                    break;
+                default:
+                    File.WriteAllText(settings.OutputLocation, value);
+                    break;
+            }
+        }
+
+        private WindowsTheme GetWindowsThemeSetting()
+        {
+            int def = 0;
+            var key = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\CurrentVersion\Themes\Personalize").GetValue("AppsUseLightTheme", "0").ToString();
+            if (Int32.TryParse(key, out def)) {
+                if (def == 1) {
+                    return WindowsTheme.LightMode;
+                } else {
+                    return WindowsTheme.DarkMode;
                 }
             }
-            
+            return WindowsTheme.Default;
         }
 
         private void TrySetColors()
         {
-            try {
-                this.BackColor = Color.FromName(windowBackgroundColor);
-            } catch (Exception) {
-                this.BackColor = Color.White;
+            if (settings.SyncWithWindowsTheme) {
+                var theme = GetWindowsThemeSetting();
+                switch (theme) {
+                    case WindowsTheme.LightMode:
+                        this.BackColor = settings.LightModeBackgroundColor;
+                        this.selected.ForeColor = settings.LightModeSelectedTextColor;
+                        this.top1.ForeColor = settings.LightModeOffset1TextColor;
+                        this.bottom1.ForeColor = settings.LightModeOffset1TextColor;
+                        this.top2.ForeColor = settings.LightModeOffset2TextColor;
+                        this.bottom2.ForeColor = settings.LightModeOffset2TextColor;
+                        this.top3.ForeColor = settings.LightModeOffset3TextColor;
+                        this.bottom3.ForeColor = settings.LightModeOffset3TextColor;
+                        break;
+                    case WindowsTheme.DarkMode:
+                        this.BackColor = settings.DarkModeBackgroundColor;
+                        this.selected.ForeColor = settings.DarkModeSelectedTextColor;
+                        this.top1.ForeColor = settings.DarkModeOffset1TextColor;
+                        this.bottom1.ForeColor = settings.DarkModeOffset1TextColor;
+                        this.top2.ForeColor = settings.DarkModeOffset2TextColor;
+                        this.bottom2.ForeColor = settings.DarkModeOffset2TextColor;
+                        this.top3.ForeColor = settings.DarkModeOffset3TextColor;
+                        this.bottom3.ForeColor = settings.DarkModeOffset3TextColor;
+                        break;
+                    default:
+                        this.BackColor = settings.LightModeBackgroundColor;
+                        this.selected.ForeColor = settings.LightModeSelectedTextColor;
+                        this.top1.ForeColor = settings.LightModeOffset1TextColor;
+                        this.bottom1.ForeColor = settings.LightModeOffset1TextColor;
+                        this.top2.ForeColor = settings.LightModeOffset2TextColor;
+                        this.bottom2.ForeColor = settings.LightModeOffset2TextColor;
+                        this.top3.ForeColor = settings.LightModeOffset3TextColor;
+                        this.bottom3.ForeColor = settings.LightModeOffset3TextColor;
+                        break;
+                }
+            } else {
+                if (settings.DefaultTheme == WindowsTheme.DarkMode) {
+                    this.BackColor = settings.DarkModeBackgroundColor;
+                    this.selected.ForeColor = settings.DarkModeSelectedTextColor;
+                    this.top1.ForeColor = settings.DarkModeOffset1TextColor;
+                    this.bottom1.ForeColor = settings.DarkModeOffset1TextColor;
+                    this.top2.ForeColor = settings.DarkModeOffset2TextColor;
+                    this.bottom2.ForeColor = settings.DarkModeOffset2TextColor;
+                    this.top3.ForeColor = settings.DarkModeOffset3TextColor;
+                    this.bottom3.ForeColor = settings.DarkModeOffset3TextColor;
+                } else {
+                    this.BackColor = settings.LightModeBackgroundColor;
+                    this.selected.ForeColor = settings.LightModeSelectedTextColor;
+                    this.top1.ForeColor = settings.LightModeOffset1TextColor;
+                    this.bottom1.ForeColor = settings.LightModeOffset1TextColor;
+                    this.top2.ForeColor = settings.LightModeOffset2TextColor;
+                    this.bottom2.ForeColor = settings.LightModeOffset2TextColor;
+                    this.top3.ForeColor = settings.LightModeOffset3TextColor;
+                    this.bottom3.ForeColor = settings.LightModeOffset3TextColor;
+                }
             }
-            try {
-                this.selected.ForeColor = Color.FromName(selectedTextColor);
-            } catch (Exception) {
-                this.selected.ForeColor = Color.SteelBlue;
-            }
-            try {
-                this.top1.ForeColor = Color.FromName(offset1TextColor);
-                this.bottom1.ForeColor = Color.FromName(offset1TextColor);
-            } catch (Exception) {
-                this.top1.ForeColor = Color.DimGray;
-                this.bottom1.ForeColor = Color.DimGray;
-            }
-            try {
-                this.top2.ForeColor = Color.FromName(offset2TextColor);
-                this.bottom2.ForeColor = Color.FromName(offset2TextColor);
-            } catch (Exception) {
-                this.top2.ForeColor = Color.Gray;
-                this.bottom2.ForeColor = Color.Gray;
-            }
-            try {
-                this.top3.ForeColor = Color.FromName(offset3TextColor);
-                this.bottom3.ForeColor = Color.FromName(offset3TextColor);
-            } catch (Exception) {
-                this.top3.ForeColor = Color.Silver;
-                this.bottom3.ForeColor = Color.Silver;
-            }
+            
         }
 
         private void WheelSelect_KeyPress(object sender, KeyPressEventArgs e)
@@ -299,10 +323,10 @@ namespace WheelSelect
         Bottom2,
         Bottom3
     }
-
-    public enum OutputMethod
+    public enum WindowsTheme
     {
-        Overwrite,
-        Append
+        Default,
+        LightMode,
+        DarkMode
     }
 }
