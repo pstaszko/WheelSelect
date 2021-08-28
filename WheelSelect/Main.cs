@@ -126,7 +126,6 @@ namespace WheelSelect
                 return selectedIndex;
             }
             var returnVal = selectedIndex - 1;
-            Debug.WriteLine("prev: " + returnVal);
             return returnVal;
         }
 
@@ -136,7 +135,6 @@ namespace WheelSelect
                 return selectedIndex;
             }
             var returnVal = selectedIndex + 1;
-            Debug.WriteLine("next: " + returnVal);
             return returnVal;
         }
 
@@ -230,7 +228,6 @@ namespace WheelSelect
 
         private void TryFindMatch(string matchThis)
         {
-            Debug.WriteLine(matchThis);
             filteredList.Clear();
             filteredList.AddRange(theList.Where(x => x.ToLower().Contains(matchThis.ToLower())).ToList());
             ScrollToIndex(0);
@@ -271,7 +268,6 @@ namespace WheelSelect
 
         private void txtInput_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
-            Debug.WriteLine(e.KeyCode);
             if (e.KeyCode == Keys.Escape) {
                 if (settings.ClearOutputFileOnEscape) {
                     WriteToSaveFile("");
