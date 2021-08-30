@@ -5,11 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Configuration;
 using System.Drawing;
+using System.Windows.Forms;
+using System.Text.RegularExpressions;
 
 namespace WheelSelect
 {
     public class Settings
     {
+        public string Delimiter { get; set; }
+        public List<string> Data { get; set; }
         public string OutputLocation { get; set; }
         public bool ClearOutputFileOnStart { get; set; }
         public bool ClearOutputFileOnEscape { get; set; }
@@ -79,9 +83,77 @@ namespace WheelSelect
             }
         }
 
+        private void ShowErrorMessage(string msg)
+        {
+            MessageBox.Show(msg
+                    , "Something went wrong"
+                    , MessageBoxButtons.OK
+                    , MessageBoxIcon.Error);
+            Application.Exit();
+            Environment.Exit(1);
+        }
+
+        private string[] getArgs()
+        {
+            // args[0] seems to always be the execution path. Neat.
+            return Environment.GetCommandLineArgs();
+        }
+
+        private bool isNull(string str)
+        {
+            return (String.IsNullOrEmpty(str) || String.IsNullOrWhiteSpace(str));
+        }
+
+        private string getOutputFilePath()
+        {
+            var args = getArgs();
+            var defaultOutput = ConfigurationManager.AppSettings["OutputLocation"] ?? @"c:\wheel_selection.txt";
+            var output = "";
+            try {
+                output = args[3];
+            } catch (Exception) {
+                output = defaultOutput;
+            }
+            if (isNull(output)) {
+                ShowErrorMessage("Output location cannot be an empty string.\n\nEither do not specify a location in the arguments or provide a valid path.");
+            }
+            return output;
+        }
+
+        private string getDelimeter()
+        {
+            var args = getArgs();
+            var delim = "";
+            try {
+                delim = args[1];
+            } catch (Exception) {
+                ShowErrorMessage("Missing the delimeter parameter.");
+            }
+            if (delim == "\\n") {
+                delim = "\n";
+            }
+            return delim;
+        }
+
+        private List<string> getData(string delim)
+        {
+            var args = getArgs();
+            var data = "";
+            try {
+                data = args[2];
+            } catch (Exception) {
+                ShowErrorMessage("Missing the data parameter.");
+            }
+            data = data.Replace("\\n", "\n");
+            var dataArray = Regex.Split(data, delim);
+            return dataArray.ToList();
+        }
+
         public Settings GetSettings()
         {
-            string outputLocation = ConfigurationManager.AppSettings["OutputLocation"] ?? @"c:\wheel_selection.txt";
+            string outputLocation = getOutputFilePath();
+            string delim = getDelimeter();
+            List<string> data = getData(delim);
             bool clearOutputFileOnStart = configToBool(ConfigurationManager.AppSettings["ClearOutputFileOnStart"], true);
             bool clearOutputFileOnEscape = configToBool(ConfigurationManager.AppSettings["ClearOutputFileOnEscape"], true);
             bool syncWithWindowsTheme = configToBool(ConfigurationManager.AppSettings["SyncWithWindowsTheme"], true);
@@ -99,6 +171,8 @@ namespace WheelSelect
             Color darkModeOffset3TextColor = configToColor(ConfigurationManager.AppSettings["DarkModeOffset3TextColor"], Color.DimGray);
             return new Settings() {
                 OutputLocation = outputLocation,
+                Delimiter = delim,
+                Data = data,
                 ClearOutputFileOnStart = clearOutputFileOnStart,
                 ClearOutputFileOnEscape = clearOutputFileOnEscape,
                 OutputMethod = outputMethod,

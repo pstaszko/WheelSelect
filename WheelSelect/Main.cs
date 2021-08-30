@@ -17,10 +17,9 @@ namespace WheelSelect
 {
     public partial class WheelSelect : Form
     {
-        private List<string> theList = new List<string>();
+        private Settings settings;
         private List<string> filteredList = new List<string>();
         private int selectedIndex = 0;
-        private Settings settings;
 
         public WheelSelect()
         {
@@ -32,27 +31,14 @@ namespace WheelSelect
         private void Form1_Load(object sender, EventArgs e)
         {
             if (settings.ClearOutputFileOnStart) {
-                WriteToSaveFile("");
+                try {
+                    WriteToSaveFile("");
+                } catch (Exception) { }
             }
             TrySetColors();
-            HandleArgs();
-            filteredList.AddRange(theList);
-            HandleEvent(false);
-        }
-
-        private void HandleArgs()
-        {
-            string[] args = Environment.GetCommandLineArgs();
-            // args[0] seems to always = execution path. Neat.
-            var delim = args[1];
-            var data = args[2];
-            if (delim == "\\n") {
-                delim = "\n";
-                data = data.Replace("\\n", "\n");
-            }
-            var splitData = Regex.Split(data, delim);
-            theList.AddRange(splitData);
             selectedIndex = -1;
+            filteredList.AddRange(settings.Data);
+            HandleEvent(false);
         }
 
         private void Form1_MouseWheel(object sender, MouseEventArgs e)
@@ -140,7 +126,14 @@ namespace WheelSelect
 
         private void SaveSelection()
         {
-            WriteToSaveFile(selected.Text);
+            try {
+                WriteToSaveFile(selected.Text);
+            } catch (Exception exn) {
+                MessageBox.Show(String.Format("Could not write to output location:\n[{0}].\n\nSpecifically:\n{1}", settings.OutputLocation, exn.Message)
+                    , "Error"
+                    , MessageBoxButtons.OK
+                    , MessageBoxIcon.Error);
+            }
             Environment.Exit(0);
         }
 
@@ -229,7 +222,7 @@ namespace WheelSelect
         private void TryFindMatch(string matchThis)
         {
             filteredList.Clear();
-            filteredList.AddRange(theList.Where(x => x.ToLower().Contains(matchThis.ToLower())).ToList());
+            filteredList.AddRange(settings.Data.Where(x => x.ToLower().Contains(matchThis.ToLower())).ToList());
             ScrollToIndex(0);
             HandleEvent(true);
         }
@@ -261,7 +254,7 @@ namespace WheelSelect
             if (txtInput.Text.Length > 0) {
                 TryFindMatch(txtInput.Text);
             } else {
-                filteredList.AddRange(theList);
+                filteredList.AddRange(settings.Data);
                 resetList();
             }
         }
@@ -270,7 +263,9 @@ namespace WheelSelect
         {
             if (e.KeyCode == Keys.Escape) {
                 if (settings.ClearOutputFileOnEscape) {
-                    WriteToSaveFile("");
+                    try {
+                        WriteToSaveFile("");
+                    } catch (Exception) { }
                 }
                 Application.Exit();
             } else if (e.KeyCode == Keys.Enter) {
