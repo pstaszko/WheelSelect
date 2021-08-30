@@ -279,21 +279,4 @@ namespace WheelSelect
             }
         }
     }
-
-    public enum Position
-    {
-        Top3,
-        Top2,
-        Top1,
-        Primary,
-        Bottom1,
-        Bottom2,
-        Bottom3
-    }
-    public enum WindowsTheme
-    {
-        Default,
-        LightMode,
-        DarkMode
-    }
 }
