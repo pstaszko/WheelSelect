@@ -25,7 +25,7 @@ The App.config has settings that allow for some customization.
 - **SyncWithWindowsTheme** Decides if the UI should follow your Windows Theme setting found in *Settings > Personalization > Colors > "Choose your default app mode"*
 - **DefaultTheme** Decides which theme to use if you choose not to sync with the Windows Theme settings.
 
-The following are color customizations and must be a valid value of the `System.Drawing.Color` struct.
+The following are color customizations and can be a valid value of the `System.Drawing.Color` struct or a non alpha hex code.
 
 - **LightModeWindowBackgroundColor** Sets the background color of the interface when in light mode.
 - **LightModeSelectedTextColor** Sets the text color of the primary selected value when in light mode.
@@ -56,9 +56,11 @@ Example:
     <add key="LightModeOffset2TextColor" value="Gray" />
     <add key="LightModeOffset3TextColor" value="DimGray" />
 
-    <add key="DarkModeWindowBackgroundColor" value="Black" />
-    <add key="DarkModeSelectedTextColor" value="SteelBlue" />
-    <add key="DarkModeOffset1TextColor" value="Silver" />
+    <add key="DarkModeWindowBackgroundColor" value="#1c1b22" />
+    <add key="DarkModeBorderColor" value="#49c29a" />
+    <add key="DarkModeInputTextColor" value="#49c29a" />
+    <add key="DarkModeSelectedTextColor" value="#7964be" />
+    <add key="DarkModeOffset1TextColor" value="Gray" />
     <add key="DarkModeOffset2TextColor" value="Gray" />
     <add key="DarkModeOffset3TextColor" value="DimGray" />
 </appSettings>
