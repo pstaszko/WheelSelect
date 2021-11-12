@@ -21,11 +21,15 @@ namespace WheelSelect
         public bool SyncWithWindowsTheme { get; set; }
         public WindowsTheme DefaultTheme { get; set; }
         public Color LightModeBackgroundColor { get; set; }
+        public Color LightModeBorderColor { get; set; }
+        public Color LightModeInputTextColor { get; set; }
         public Color LightModeSelectedTextColor { get; set; }
         public Color LightModeOffset1TextColor { get; set; }
         public Color LightModeOffset2TextColor { get; set; }
         public Color LightModeOffset3TextColor { get; set; }
         public Color DarkModeBackgroundColor { get; set; }
+        public Color DarkModeBorderColor { get; set; }
+        public Color DarkModeInputTextColor { get; set; }
         public Color DarkModeSelectedTextColor { get; set; }
         public Color DarkModeOffset1TextColor { get; set; }
         public Color DarkModeOffset2TextColor { get; set; }
@@ -82,7 +86,18 @@ namespace WheelSelect
                 }
             }
         }
-
+        private Color configHexColor(string cfg, Color def)
+        {
+            if (String.IsNullOrEmpty(cfg)) {
+                return def;
+            } else {
+                try {
+                    return ColorTranslator.FromHtml(cfg);
+                } catch (Exception) {
+                    return def;
+                }
+            }
+        }
         private void ShowErrorMessage(string msg)
         {
             MessageBox.Show(msg
@@ -160,15 +175,19 @@ namespace WheelSelect
             OutputMethodEnum outputMethod = configToOutputMethodEnum(ConfigurationManager.AppSettings["OutputMethod"], OutputMethodEnum.Overwrite);
             WindowsTheme defaultTheme = configToWindowsTheme(ConfigurationManager.AppSettings["DefaultTheme"], WindowsTheme.Default);
             Color lightModeWindowBackgroundColor = configToColor(ConfigurationManager.AppSettings["LightModeWindowBackgroundColor"], Color.White);
-            Color lightModeSelectedTextColor = configToColor(ConfigurationManager.AppSettings["LightModeSelectedTextColor"], Color.SteelBlue);
-            Color lightModeOffset1TextColor = configToColor(ConfigurationManager.AppSettings["LightModeOffset1TextColor"], Color.Silver);
-            Color lightModeOffset2TextColor = configToColor(ConfigurationManager.AppSettings["LightModeOffset2TextColor"], Color.Gray);
-            Color lightModeOffset3TextColor = configToColor(ConfigurationManager.AppSettings["LightModeOffset3TextColor"], Color.DimGray);
-            Color darkModeWindowBackgroundColor = configToColor(ConfigurationManager.AppSettings["DarkModeWindowBackgroundColor"], Color.Black);
-            Color darkModeSelectedTextColor = configToColor(ConfigurationManager.AppSettings["DarkModeSelectedTextColor"], Color.White);
-            Color darkModeOffset1TextColor = configToColor(ConfigurationManager.AppSettings["DarkModeOffset1TextColor"], Color.Silver);
-            Color darkModeOffset2TextColor = configToColor(ConfigurationManager.AppSettings["DarkModeOffset2TextColor"], Color.Gray);
-            Color darkModeOffset3TextColor = configToColor(ConfigurationManager.AppSettings["DarkModeOffset3TextColor"], Color.DimGray);
+            Color lightModeBorderColor = configHexColor(ConfigurationManager.AppSettings["LightModeBorderColor"], Color.White);
+            Color lightModeInputTextColor = configHexColor(ConfigurationManager.AppSettings["LightModeInputTextColor"], Color.SteelBlue);
+            Color lightModeSelectedTextColor = configHexColor(ConfigurationManager.AppSettings["LightModeSelectedTextColor"], Color.SteelBlue);
+            Color lightModeOffset1TextColor = configHexColor(ConfigurationManager.AppSettings["LightModeOffset1TextColor"], Color.Silver);
+            Color lightModeOffset2TextColor = configHexColor(ConfigurationManager.AppSettings["LightModeOffset2TextColor"], Color.Gray);
+            Color lightModeOffset3TextColor = configHexColor(ConfigurationManager.AppSettings["LightModeOffset3TextColor"], Color.DimGray);
+            Color darkModeWindowBackgroundColor = configHexColor(ConfigurationManager.AppSettings["DarkModeWindowBackgroundColor"], Color.Black);
+            Color darkModeBorderColor = configHexColor(ConfigurationManager.AppSettings["DarkModeBorderColor"], Color.Black);
+            Color darkModeInputTextColor = configHexColor(ConfigurationManager.AppSettings["DarkModeInputTextColor"], Color.White);
+            Color darkModeSelectedTextColor = configHexColor(ConfigurationManager.AppSettings["DarkModeSelectedTextColor"], Color.White);
+            Color darkModeOffset1TextColor = configHexColor(ConfigurationManager.AppSettings["DarkModeOffset1TextColor"], Color.Silver);
+            Color darkModeOffset2TextColor = configHexColor(ConfigurationManager.AppSettings["DarkModeOffset2TextColor"], Color.Gray);
+            Color darkModeOffset3TextColor = configHexColor(ConfigurationManager.AppSettings["DarkModeOffset3TextColor"], Color.DimGray);
             return new Settings() {
                 OutputLocation = outputLocation,
                 Delimiter = delim,
@@ -179,11 +198,15 @@ namespace WheelSelect
                 SyncWithWindowsTheme = syncWithWindowsTheme,
                 DefaultTheme = defaultTheme,
                 LightModeBackgroundColor = lightModeWindowBackgroundColor,
+                LightModeBorderColor = lightModeBorderColor,
+                LightModeInputTextColor = lightModeInputTextColor,
                 LightModeSelectedTextColor = lightModeSelectedTextColor,
                 LightModeOffset1TextColor = lightModeOffset1TextColor,
                 LightModeOffset2TextColor = lightModeOffset2TextColor,
                 LightModeOffset3TextColor = lightModeOffset3TextColor,
                 DarkModeBackgroundColor = darkModeWindowBackgroundColor,
+                DarkModeBorderColor = darkModeBorderColor,
+                DarkModeInputTextColor = darkModeInputTextColor,
                 DarkModeSelectedTextColor = darkModeSelectedTextColor,
                 DarkModeOffset1TextColor = darkModeOffset1TextColor,
                 DarkModeOffset2TextColor = darkModeOffset2TextColor,

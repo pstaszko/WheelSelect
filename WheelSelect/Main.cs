@@ -169,7 +169,7 @@ namespace WheelSelect
         private void SetDarkMode()
         {
             this.txtInput.BackColor = settings.DarkModeBackgroundColor;
-            this.txtInput.ForeColor = settings.DarkModeSelectedTextColor;
+            this.txtInput.ForeColor = settings.DarkModeInputTextColor;
             this.BackColor = settings.DarkModeBackgroundColor;
             this.selected.ForeColor = settings.DarkModeSelectedTextColor;
             this.top1.ForeColor = settings.DarkModeOffset1TextColor;
@@ -183,7 +183,7 @@ namespace WheelSelect
         private void SetLightMode()
         {
             this.txtInput.BackColor = settings.LightModeBackgroundColor;
-            this.txtInput.ForeColor = settings.LightModeSelectedTextColor;
+            this.txtInput.ForeColor = settings.LightModeInputTextColor;
             this.BackColor = settings.LightModeBackgroundColor;
             this.selected.ForeColor = settings.LightModeSelectedTextColor;
             this.top1.ForeColor = settings.LightModeOffset1TextColor;
@@ -276,6 +276,21 @@ namespace WheelSelect
             } else if (e.KeyCode == Keys.Down) {
                 HandleEvent(false);
                 SendKeys.Send("{END}");
+            }
+        }
+
+        private void panel3_Paint(object sender, PaintEventArgs e)
+        {
+            var theme = GetWindowsThemeSetting();
+            switch (theme) {
+                case WindowsTheme.LightMode:
+                    ControlPaint.DrawBorder(e.Graphics, ClientRectangle, settings.LightModeBorderColor, ButtonBorderStyle.Solid);
+                    break;
+                case WindowsTheme.DarkMode:
+                    ControlPaint.DrawBorder(e.Graphics, ClientRectangle, settings.DarkModeBorderColor, ButtonBorderStyle.Solid);
+                    break;
+                default:
+                    break;
             }
         }
     }

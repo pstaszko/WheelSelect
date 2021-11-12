@@ -37,8 +37,10 @@
             this.panel1 = new System.Windows.Forms.Panel();
             this.txtInput = new System.Windows.Forms.TextBox();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.panel3 = new System.Windows.Forms.Panel();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
+            this.panel3.SuspendLayout();
             this.SuspendLayout();
             // 
             // top3
@@ -149,20 +151,21 @@
             this.panel1.Controls.Add(this.bottom2);
             this.panel1.Controls.Add(this.top1);
             this.panel1.Controls.Add(this.bottom1);
-            this.panel1.Location = new System.Drawing.Point(0, 36);
+            this.panel1.Location = new System.Drawing.Point(3, 39);
             this.panel1.Margin = new System.Windows.Forms.Padding(3, 0, 3, 3);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(486, 187);
+            this.panel1.Size = new System.Drawing.Size(486, 192);
             this.panel1.TabIndex = 15;
             // 
             // txtInput
             // 
+            this.txtInput.BackColor = System.Drawing.SystemColors.HotTrack;
             this.txtInput.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.txtInput.Font = new System.Drawing.Font("Segoe UI Light", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtInput.Location = new System.Drawing.Point(3, 6);
+            this.txtInput.Location = new System.Drawing.Point(4, 6);
             this.txtInput.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
             this.txtInput.Name = "txtInput";
-            this.txtInput.Size = new System.Drawing.Size(480, 28);
+            this.txtInput.Size = new System.Drawing.Size(482, 28);
             this.txtInput.TabIndex = 16;
             this.txtInput.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.txtInput.TextChanged += new System.EventHandler(this.txtInput_TextChanged);
@@ -170,23 +173,34 @@
             // 
             // panel2
             // 
+            this.panel2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.panel2.Controls.Add(this.txtInput);
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Top;
-            this.panel2.Location = new System.Drawing.Point(0, 0);
+            this.panel2.Location = new System.Drawing.Point(4, 3);
             this.panel2.Margin = new System.Windows.Forms.Padding(3, 3, 3, 0);
             this.panel2.Name = "panel2";
             this.panel2.Padding = new System.Windows.Forms.Padding(0, 3, 0, 0);
             this.panel2.Size = new System.Drawing.Size(486, 36);
             this.panel2.TabIndex = 17;
             // 
+            // panel3
+            // 
+            this.panel3.Controls.Add(this.panel2);
+            this.panel3.Controls.Add(this.panel1);
+            this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel3.Location = new System.Drawing.Point(0, 0);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(493, 235);
+            this.panel3.TabIndex = 18;
+            this.panel3.Paint += new System.Windows.Forms.PaintEventHandler(this.panel3_Paint);
+            // 
             // WheelSelect
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(486, 223);
-            this.Controls.Add(this.panel2);
-            this.Controls.Add(this.panel1);
+            this.ClientSize = new System.Drawing.Size(493, 235);
+            this.Controls.Add(this.panel3);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -201,6 +215,7 @@
             this.panel1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.panel2.PerformLayout();
+            this.panel3.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -217,6 +232,7 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.TextBox txtInput;
         private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Panel panel3;
     }
 }
 
