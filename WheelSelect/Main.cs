@@ -216,7 +216,7 @@ namespace WheelSelect
                     SetLightMode();
                 }
             }
-            
+
         }
 
         private void TryFindMatch(string matchThis)
@@ -232,7 +232,7 @@ namespace WheelSelect
             var diff = newIndex - selectedIndex;
             var diffAbs = Math.Abs(diff);
             var scrollUp = true;
-            
+
             // the target value is further down the list and we need to scroll down to get to it
             if (diff > 0) {
                 scrollUp = false;
