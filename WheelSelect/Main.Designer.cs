@@ -1,4 +1,4 @@
-﻿namespace WheelSelect
+namespace WheelSelect
 {
     partial class WheelSelect
     {
@@ -235,4 +235,3 @@
         private System.Windows.Forms.Panel panel3;
     }
 }
-
